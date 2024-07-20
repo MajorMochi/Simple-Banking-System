@@ -1,1 +1,109 @@
+#include <iostream>
+#include <string.h>
+#include<cstdlib> //this library is for the random number generated for the first 6 digits of the account number.
+#include<ctime> //this is used so the random numbers are always random.
+using namespace std;
 
+struct Address
+{
+    string house_number, street_name, town, postcode;
+};
+
+class Account
+{
+protected:
+    string Fname,Lname;
+    int number, pin, balance, amount, dob[3];
+    char tt[2]={'d','c'};
+
+public:
+    Account():balance(0){}
+
+    Address address;
+
+    void Create_Account()
+    {
+
+        cout<<"Enter First and Last Name:"<<endl;
+        cin>>Fname>>Lname;
+
+        cout<<"Enter Address(HOUSE NUMBER - STREET NAME -LOCALITY NAME - TOWN - POSTCODE:"<<endl;
+            cin>>address.house_number >> address.street_name >> address.town >> address.postcode;
+
+        cout<<"Enter Date Of Birth:"<<endl;
+        for(int i=0; i<3; i++)
+        {
+            cin>>dob[i];
+        }
+
+        cout<<"Enter Account Pin:"<<endl;
+        cin>>pin;
+
+        cout<<"Make your Initial Deposit($1000 Min)"<<endl;
+        cin>>amount;
+        while(amount<1000)
+        {
+            cout<<"Your Initial Deposit CANNOT be less than $1000"<<endl;
+            cin>>amount;
+        }
+
+        Balance_Update(amount, 'd');
+
+        srand(time(0));
+
+        int random_section = rand() % 1000000;
+        int date = dob[0];
+        int month = dob[1];
+
+        number= random_section * 10000 + date * 100 + month;
+    }
+
+    int Balance_Update(int amount, char t)
+    {
+        if(t=='d')
+        {
+            balance+=amount;
+        }
+        else if(t=='w')
+        {
+            balance-=amount;
+        }
+        return balance;
+    }
+
+    void Display_Account()
+    {
+        cout<<"Name: "<<Fname<<" "<<Lname<<endl;
+        cout<<"Address: "<<address.house_number<<" "<<address.street_name<<" "<<address.town<<" "<<address.postcode<<endl;
+        cout<<"Account Number: "<<number<<endl;
+        cout<<"Balance: "<<balance<<endl;
+    }
+
+    void Display_Balance()
+    {
+        cout<<number<<" Balance:"<<balance;
+    }
+};
+
+int main()
+{
+    Account account1;
+
+    char t[2]={'d','c'}, choice;
+
+    cout<<"WELCOME"<<endl;
+    cout<<"-------------"<<endl;
+
+    cout<<"(C)reate Account"<<" (B)alance Check"<<" (D)eposit"<<" (W)ithdrawal"<<"(T)ransfer"<<"(B)ill Payment"<<"(Q)uit"<<endl;
+    cin>>choice;
+
+    if(choice=='C' || choice=='c')
+    {
+        account1.Create_Account();
+        account1.Display_Account();
+    }
+    else if(choice=='B'||choice=='b')
+    {
+        account1.Display_Balance();
+    }
+}
