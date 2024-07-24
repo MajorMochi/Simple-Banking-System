@@ -1,53 +1,58 @@
 #include <iostream>
-#include <string.h>
-#include<cstdlib> //this library is for the random number generated for the first 6 digits of the account number.
-#include<ctime> //this is used so the random numbers are always random.
+#include <string>
+#include <cstdlib> // this library is for the random number generated for the first 6 digits of the account number.
+#include <ctime>   // this is used so the random numbers are always random.
 using namespace std;
 
 struct Address
 {
-    string house_number, street_name, town, postcode;
+    string house_number, street_name, locality, town, postcode;
 };
 
 class Account
 {
 protected:
-    string Fname,Lname;
-    int number, pin, balance, amount, dob[3];
-    char tt[2]={'d','c'};
+    string Fname, Lname;
+    int number, pin, balance, amount, dob[3], bills[4] = {100, 65, 150, 50}, temp;
 
 public:
-    Account():balance(0){}
+    Account() : balance(0) {}
 
     Address address;
 
     void Create_Account()
     {
+        cout << "Enter First and Last Name:" << endl;
+        cin >> Fname >> Lname;
 
-        cout<<"Enter First and Last Name:"<<endl;
-        cin>>Fname>>Lname;
-
-        cout<<"Enter Address(HOUSE NUMBER - STREET NAME -LOCALITY NAME - TOWN - POSTCODE:"<<endl;
-            cin>>address.house_number >> address.street_name >> address.town >> address.postcode;
-
-        cout<<"Enter Date Of Birth:"<<endl;
-        for(int i=0; i<3; i++)
+        cout << "Enter Date Of Birth (Day Month Year):" << endl;
+        for (int i = 1; i <= 3; i++)
         {
-            cin>>dob[i];
+            cin >> dob[i];
         }
 
-        cout<<"Enter Account Pin:"<<endl;
-        cin>>pin;
+        cout << "Enter Address (HOUSE NUMBER - STREET NAME - LOCALITY NAME - TOWN - POSTCODE):" << endl;
+        cin >> address.house_number >> address.street_name >> address.locality >> address.town >> address.postcode;
 
-        cout<<"Make your Initial Deposit($1000 Min)"<<endl;
-        cin>>amount;
-        while(amount<1000)
+         do{
+            cout << "Enter Account Pin:" << endl;
+            cin >> temp;
+            cout << "Re-enter Pin:" << endl;
+            cin >> pin;
+            if (pin != temp) {
+                cout << "Pin Doesn't Match the Initial Entry" << endl;
+            }
+        }while (pin != temp);
+
+        cout << "Make your Initial Deposit ($1000 Min):" << endl;
+        cin >> amount;
+        while (amount < 1000)
         {
-            cout<<"Your Initial Deposit CANNOT be less than $1000"<<endl;
-            cin>>amount;
+            cout << "Your Initial Deposit CANNOT be less than $1000" << endl;
+            cin >> amount;
         }
 
-        Balance_Update(amount, 'd');
+        balance += amount;
 
         srand(time(0));
 
@@ -55,33 +60,71 @@ public:
         int date = dob[0];
         int month = dob[1];
 
-        number= random_section * 10000 + date * 100 + month;
+        number = random_section * 10000 + date * 100 + month;
     }
 
-    int Balance_Update(int amount, char t)
+    int Balance_Update(char t)
     {
-        if(t=='d')
+        if (t == 'D' || t == 'd')
         {
-            balance+=amount;
+            cout << "Enter Amount To be Deposited: ";
+            cin >> amount;
+            balance += amount;
+            cout<<"Balance: "<<balance<<endl;
         }
-        else if(t=='w')
+        else if (t == 'W' || t == 'w')
         {
-            balance-=amount;
+            cout << "Enter Amount To be Withdrawn: ";
+            cin >> amount; // this line was missing in the original code
+            balance -= amount;
+            cout<<"Balance: "<<balance<<endl;
         }
         return balance;
     }
 
     void Display_Account()
     {
-        cout<<"Name: "<<Fname<<" "<<Lname<<endl;
-        cout<<"Address: "<<address.house_number<<" "<<address.street_name<<" "<<address.town<<" "<<address.postcode<<endl;
-        cout<<"Account Number: "<<number<<endl;
-        cout<<"Balance: "<<balance<<endl;
+        cout << "Name: " << Fname << " " << Lname << endl;
+        cout << "Address: " << address.house_number << " " << address.street_name << " " << address.locality << " " << address.town << " " << address.postcode << endl;
+        cout << "Account Number: " << number << endl;
+        cout << "Balance: " << balance << endl;
     }
 
+    void Bills_Payments()
+    {
+        string choice;
+        cout << "Water Bill" << "   Electricity Bill" << endl;
+        cout << "Gas Bill" << "     Internet Bill" << endl;
+        cout << "Enter Bill to be Paid Off" << endl;
+        cin >> choice;
+        if (choice == "Water"||choice == "water"||choice == "W"||choice == "w")
+        {
+            cout << "Amount Owed= " << bills[0]<<endl;
+            balance -= bills[0];
+            cout<<"Balance: "<<balance<<endl;
+        }
+        else if (choice == "Electricity"||choice == "electricity"||choice == "E"||choice == "e")
+        {
+            cout << "Amount Owed= " << bills[1]<<endl;
+            balance -= bills[1];
+            cout<<"Balance: "<<balance<<endl;
+        }
+        else if (choice == "Gas"||choice == "gas"||choice == "G"||choice == "g")
+        {
+            cout << "Amount Owed= " << bills[2]<<endl;
+            balance -= bills[2];
+            cout<<"Balance: "<<balance<<endl;
+        }
+        else if (choice == "Internet"||choice == "internet"||choice == "I"||choice == "i")
+        {
+            cout << "Amount Owed= " << bills[3]<<endl;
+            balance -= bills[3];
+            cout<<"Balance: "<<balance;
+        }
+    }
     void Display_Balance()
     {
-        cout<<number<<" Balance:"<<balance;
+        cout << "Account Number " << number << "'s Balance: " << balance << endl;
     }
 };
 
@@ -89,21 +132,37 @@ int main()
 {
     Account account1;
 
-    char t[2]={'d','c'}, choice;
-
-    cout<<"WELCOME"<<endl;
-    cout<<"-------------"<<endl;
-
-    cout<<"(C)reate Account"<<" (B)alance Check"<<" (D)eposit"<<" (W)ithdrawal"<<"(T)ransfer"<<"(B)ill Payment"<<"(Q)uit"<<endl;
-    cin>>choice;
-
-    if(choice=='C' || choice=='c')
+    char choice;
+    cout << "                                                            WELCOME" << endl;
+    cout << "                                               -----------------------------------" << endl;
+    while (choice != 'Q' && choice != 'q')
     {
-        account1.Create_Account();
-        account1.Display_Account();
-    }
-    else if(choice=='B'||choice=='b')
-    {
-        account1.Display_Balance();
+        cout << "                                               (C)reate Account     (B)alance Check" << endl;
+        cout << "                                               (D)eposit            (W)ithdrawal" << endl;
+        cout << "                                               (P)ay Bill           (Q)uit" << endl;
+        cin >> choice;
+        if (choice == 'C' || choice == 'c')
+        {
+            account1.Create_Account();
+            account1.Display_Account();
+        }
+        else if (choice == 'B' || choice == 'b')
+        {
+            account1.Display_Balance();
+        }
+
+        else if (choice == 'D' || choice == 'd')
+        {
+            account1.Balance_Update('d');
+        }
+        else if (choice == 'W' || choice == 'w')
+        {
+            account1.Balance_Update('w');
+        }
+        else if (choice == 'P' || choice == 'p')
+        {
+            account1.Bills_Payments();
+        }
     }
 }
+
